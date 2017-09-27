@@ -1,1 +1,0 @@
-Simulacion.d: ../Simulacion.c

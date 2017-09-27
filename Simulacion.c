@@ -175,13 +175,15 @@ int main(int argc, char** argv){
 
 	float tiempo = 0;
 	float tiempo_final = 120;
+	bool running = 1;
 
 	evento *primera_llegada = malloc(sizeof(evento));
 	primera_llegada->tiempo_evento = 0;
 	list_add(list_llegadas, primera_llegada);
 
 	while(tiempo <= tiempo_final){
-		int menor_d = proxima_salida_des(*cant_serv_des), menor_s = proxima_salida_sop(*cant_serv_sop);
+		int menor_d = proxima_salida_des(*cant_serv_des);
+		int menor_s = proxima_salida_sop(*cant_serv_sop);
 		int menor_ll = proxima_llegada();
 		evento *prox_llegada = list_get(list_llegadas, menor_ll);
 
@@ -212,10 +214,14 @@ int main(int argc, char** argv){
 					printf("Habra nueva salida de desarrollo en %f\n", tiempo + tiempo_atencion);
 				}
 				total_llegadas_d += tiempo;
-			}else{
+
+			}
+			else
+			{
 				numero_tickets_sop ++;
 				printf("Nuevo ticket de Soporte\n");
-				if(numero_tickets_sop <= *cant_serv_sop){
+				if(numero_tickets_sop <= *cant_serv_sop)
+				{
 					int server_mas_ocioso = server_sop_mas_ocioso(*cant_serv_sop, tiempo);
 					float tiempo_atencion = generar_tiempo_atencion_s();
 
@@ -224,10 +230,11 @@ int main(int argc, char** argv){
 					server_sop[server_mas_ocioso].total_tiempo_ocioso = tiempo - server_sop[server_mas_ocioso].inicio_tiempo_ocioso;
 
 					printf("Habra nueva salida de soporte en %f\n", tiempo + tiempo_atencion);
-			}
+				}
 				total_llegadas_s += tiempo;
+
 			}
-		}else if(server_des[menor_d].tiempo_salida <= server_sop[menor_d].tiempo_salida){
+		}else if(server_des[menor_d].tiempo_salida <= server_sop[menor_s].tiempo_salida){
 			tiempo = server_des[menor_d].tiempo_salida;
 			printf("\nSalida en %f\n", tiempo);
 
@@ -261,10 +268,31 @@ int main(int argc, char** argv){
 			}
 			total_operaciones_soporte ++;
 			total_salidas_s += tiempo;
+
 		}
 		sleep(1);
+	/*	if(tiempo > tiempo_final)
+		{
+			printf("!");
+			if(numero_tickets_sop + numero_tickets_des > 0){
+				printf("!!");
+				evento *prox_llegada = list_get(list_llegadas, menor_ll);
+				prox_llegada->tiempo_evento = HV;
+			}
+			else{
+				printf("!!");
+				running = 0;
+			}
+		}*/
 	}
-
+	printf("Total Llegadas Soporte: %f \n",total_llegadas_s);
+	printf("Total Llegadas Desarrollo: %f \n",total_llegadas_d);
+	printf("Total Operaciones Desarrollo: %d \n",total_operaciones_desarrollo);
+	printf("Total Salidas Desarrollo: %f \n",total_salidas_d);
+	printf("Total Operaciones Soporte: %d \n",total_operaciones_soporte);
+	printf("Total Salidas Soporte: %f \n",total_salidas_s);
+	printf("Total Atencion Desarrollo: %f \n", total_atencion_desarrollo);
+	printf("Total Atencion Soporte: %f \n", total_atencion_soporte);
 	float promedio_tiempo_espera_des = (total_salidas_d - total_llegadas_d - total_atencion_desarrollo)/total_operaciones_desarrollo;
 	float promedio_tiempo_espera_sop = (total_salidas_s - total_llegadas_s - total_atencion_soporte)/total_operaciones_soporte;
 
