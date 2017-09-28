@@ -139,6 +139,22 @@ int server_sop_mas_ocioso(int size, float tiempo){
 	return posicion;
 }
 
+bool salidas_pendientes(int size_d, int size_s){
+	int i;
+	bool ocupado = false;
+	for(i=0; i<size_d; i++){
+		if(server_des[i].tiempo_salida != HV){
+			ocupado = true;
+		}
+	}
+	for(i=0; i<size_s; i++){
+		if(server_sop[i].tiempo_salida != HV){
+			ocupado = true;
+		}
+	}
+	return ocupado;
+}
+
 int main(int argc, char** argv){
 	system("clear");
 	printf("SISTEMA DE SIMULACION DE COLAS DE TICKETS, by GIUSSAyCo. Ltd.\nAll rights reserved\n\nPulse cualquier tecla para continuar\n");
@@ -175,7 +191,7 @@ int main(int argc, char** argv){
 
 	float tiempo = 0;
 	float tiempo_final = 120;
-	bool running = 1;
+	//bool running = 1;
 
 	evento *primera_llegada = malloc(sizeof(evento));
 	primera_llegada->tiempo_evento = 0;
@@ -284,6 +300,51 @@ int main(int argc, char** argv){
 				running = 0;
 			}
 		}*/
+	}
+	if(numero_tickets_des > 0 || numero_tickets_sop > 0){
+
+		while(salidas_pendientes(*cant_serv_des, *cant_serv_sop)){
+
+			int menor_d = proxima_salida_des(*cant_serv_des);
+			int menor_s = proxima_salida_sop(*cant_serv_sop);
+
+			if(server_des[menor_d].tiempo_salida <= server_sop[menor_s].tiempo_salida){
+						tiempo = server_des[menor_d].tiempo_salida;
+						printf("\nSalida en %f\n", tiempo);
+
+						numero_tickets_des --;
+						if(numero_tickets_des >= *cant_serv_des){
+							float tiempo_atencion = generar_tiempo_atencion_d();
+							server_des[menor_d].tiempo_salida = tiempo + tiempo_atencion;
+							total_atencion_desarrollo += tiempo_atencion;
+
+							printf("Habra nueva salida de desarrollo en %f\n", tiempo + tiempo_atencion);
+						}else{
+							server_des[menor_d].inicio_tiempo_ocioso = tiempo;
+							server_des[menor_d].tiempo_salida = HV;
+						}
+						total_operaciones_desarrollo ++;
+						total_salidas_d += tiempo;
+					}else{
+						tiempo = server_sop[menor_s].tiempo_salida;
+						printf("\nSalida en %f\n", tiempo);
+
+						numero_tickets_sop --;
+						if(numero_tickets_sop >= *cant_serv_sop){
+							float tiempo_atencion = generar_tiempo_atencion_s();
+							server_sop[menor_s].tiempo_salida = tiempo + tiempo_atencion;
+							total_atencion_soporte += tiempo_atencion;
+
+							printf("Habra nueva salida de soporte en %f\n", tiempo + tiempo_atencion);
+						}else{
+							server_sop[menor_s].inicio_tiempo_ocioso = tiempo;
+							server_sop[menor_s].tiempo_salida = HV;
+						}
+						total_operaciones_soporte ++;
+						total_salidas_s += tiempo;
+
+					}
+		}
 	}
 	printf("Total Llegadas Soporte: %f \n",total_llegadas_s);
 	printf("Total Llegadas Desarrollo: %f \n",total_llegadas_d);
