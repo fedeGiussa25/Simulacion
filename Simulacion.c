@@ -23,6 +23,7 @@ typedef struct{
 
 server *server_des;
 server *server_sop;
+float tiempo;
 
 void inicializar_servers(int32_t M, int32_t N){
 	int i;
@@ -100,7 +101,7 @@ int proxima_llegada(){
 
 float generar_intervalo_llegada(){
 	float r = random_value();
-	return 1 + r*11;
+	return 1 + r*5;
 }
 
 float generar_tiempo_atencion_d(){
@@ -110,7 +111,7 @@ float generar_tiempo_atencion_d(){
 
 float generar_tiempo_atencion_s(){
 	float r = random_value();
-	return 0.5 + r*0.5;
+	return 1 + r*2;
 }
 
 int server_des_mas_ocioso(int size, float tiempo){
@@ -155,6 +156,16 @@ bool salidas_pendientes(int size_d, int size_s){
 	return ocupado;
 }
 
+void imprimir_PTOs(int size_d, int size_s){
+	int i;
+	for(i=0; i<size_d; i++){
+		printf("Server de desarrollo %d	-	%f\n", i+1, (server_des[i].total_tiempo_ocioso * 100)/tiempo);
+	}
+	for(i=0; i<size_s; i++){
+		printf("Server de soporte %d	-	%f\n", i+1, (server_sop[i].total_tiempo_ocioso * 100)/tiempo);
+	}
+}
+
 int main(int argc, char** argv){
 	system("clear");
 	printf("SISTEMA DE SIMULACION DE COLAS DE TICKETS, by GIUSSAyCo. Ltd.\nAll rights reserved\n\nPulse cualquier tecla para continuar\n");
@@ -180,6 +191,8 @@ int main(int argc, char** argv){
 	int32_t total_operaciones_desarrollo = 0;
 	int32_t total_operaciones_soporte = 0;
 
+	tiempo = 0;
+
 	printf("Ingrese numero de servidores de Desarrollo: ");
 	scanf("%d", cant_serv_des);
 	system("clear");
@@ -189,7 +202,6 @@ int main(int argc, char** argv){
 
 	inicializar_servers(*cant_serv_des, *cant_serv_sop);
 
-	float tiempo = 0;
 	float tiempo_final = 120;
 	//bool running = 1;
 
@@ -286,7 +298,7 @@ int main(int argc, char** argv){
 			total_salidas_s += tiempo;
 
 		}
-		sleep(1);
+		//sleep(1);
 	/*	if(tiempo > tiempo_final)
 		{
 			printf("!");
@@ -354,10 +366,14 @@ int main(int argc, char** argv){
 	printf("Total Salidas Soporte: %f \n",total_salidas_s);
 	printf("Total Atencion Desarrollo: %f \n", total_atencion_desarrollo);
 	printf("Total Atencion Soporte: %f \n", total_atencion_soporte);
+
 	float promedio_tiempo_espera_des = (total_salidas_d - total_llegadas_d - total_atencion_desarrollo)/total_operaciones_desarrollo;
 	float promedio_tiempo_espera_sop = (total_salidas_s - total_llegadas_s - total_atencion_soporte)/total_operaciones_soporte;
 
 	printf("\n*****Fin de Simulacion*****\nResultados: PECD= %f,PECS= %f\n", promedio_tiempo_espera_des, promedio_tiempo_espera_sop);
+
+	printf("Porcentajes de tiempo ocioso\n");
+	imprimir_PTOs(*cant_serv_des, *cant_serv_sop);
 
 	free(server_des);
 	free(server_sop);
