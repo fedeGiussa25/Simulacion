@@ -101,17 +101,17 @@ int proxima_llegada(){
 
 float generar_intervalo_llegada(){
 	float r = random_value();
-	return 1 + r*5;
+	return 3 + r;
 }
 
 float generar_tiempo_atencion_d(){
 	float r = random_value();
-	return 3 + r*5;
+	return 8 + r*2;
 }
 
 float generar_tiempo_atencion_s(){
 	float r = random_value();
-	return 1 + r*2;
+	return 3 + r*2;
 }
 
 int server_des_mas_ocioso(int size){
@@ -193,6 +193,9 @@ int main(int argc, char** argv){
 
 	tiempo = 0;
 
+    int seed = time(NULL);
+    srand(seed);
+
 	printf("Ingrese numero de servidores de Desarrollo: ");
 	scanf("%d", cant_serv_des);
 	system("clear");
@@ -202,7 +205,7 @@ int main(int argc, char** argv){
 
 	inicializar_servers(*cant_serv_des, *cant_serv_sop);
 
-	float tiempo_final = 120;
+	float tiempo_final = 5952;
 	//bool running = 1;
 
 	evento *primera_llegada = malloc(sizeof(evento));
@@ -272,6 +275,10 @@ int main(int argc, char** argv){
 			if(numero_tickets_des >= *cant_serv_des){
 				float tiempo_atencion = generar_tiempo_atencion_d();
 				server_des[menor_d].tiempo_salida = tiempo + tiempo_atencion;
+
+				//todo
+				server_des[menor_d].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
+
 				total_atencion_desarrollo += tiempo_atencion;
 
 				printf("Habra nueva salida de desarrollo en %f\n", tiempo + tiempo_atencion);
@@ -289,6 +296,10 @@ int main(int argc, char** argv){
 			if(numero_tickets_sop >= *cant_serv_sop){
 				float tiempo_atencion = generar_tiempo_atencion_s();
 				server_sop[menor_s].tiempo_salida = tiempo + tiempo_atencion;
+
+				//todo
+				server_sop[menor_s].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
+
 				total_atencion_soporte += tiempo_atencion;
 
 				printf("Habra nueva salida de soporte en %f\n", tiempo + tiempo_atencion);
@@ -330,6 +341,10 @@ int main(int argc, char** argv){
 						if(numero_tickets_des >= *cant_serv_des){
 							float tiempo_atencion = generar_tiempo_atencion_d();
 							server_des[menor_d].tiempo_salida = tiempo + tiempo_atencion;
+
+							//todo
+							server_des[menor_d].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
+
 							total_atencion_desarrollo += tiempo_atencion;
 
 							printf("Habra nueva salida de desarrollo en %f\n", tiempo + tiempo_atencion);
@@ -347,6 +362,10 @@ int main(int argc, char** argv){
 						if(numero_tickets_sop >= *cant_serv_sop){
 							float tiempo_atencion = generar_tiempo_atencion_s();
 							server_sop[menor_s].tiempo_salida = tiempo + tiempo_atencion;
+
+							//todo
+							server_sop[menor_s].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
+
 							total_atencion_soporte += tiempo_atencion;
 
 							printf("Habra nueva salida de soporte en %f\n", tiempo + tiempo_atencion);
