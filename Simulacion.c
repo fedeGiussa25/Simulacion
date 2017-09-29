@@ -114,7 +114,7 @@ float generar_tiempo_atencion_s(){
 	return 1 + r*2;
 }
 
-int server_des_mas_ocioso(int size, float tiempo){
+int server_des_mas_ocioso(int size){
 	int i, posicion = 0;
 	float mayor = 0;
 
@@ -127,7 +127,7 @@ int server_des_mas_ocioso(int size, float tiempo){
 	return posicion;
 }
 
-int server_sop_mas_ocioso(int size, float tiempo){
+int server_sop_mas_ocioso(int size){
 	int i, posicion = 0;
 	float mayor = 0;
 
@@ -144,12 +144,12 @@ bool salidas_pendientes(int size_d, int size_s){
 	int i;
 	bool ocupado = false;
 	for(i=0; i<size_d; i++){
-		if(server_des[i].tiempo_salida != HV){
+		if(server_des[i].tiempo_salida < HV){
 			ocupado = true;
 		}
 	}
 	for(i=0; i<size_s; i++){
-		if(server_sop[i].tiempo_salida != HV){
+		if(server_sop[i].tiempo_salida < HV){
 			ocupado = true;
 		}
 	}
@@ -159,7 +159,7 @@ bool salidas_pendientes(int size_d, int size_s){
 void imprimir_PTOs(int size_d, int size_s){
 	int i;
 	for(i=0; i<size_d; i++){
-		printf("Server de desarrollo %d	-	%f\n", i+1, (server_des[i].total_tiempo_ocioso * 100)/tiempo);
+		printf("Server de desarrollo %d		-	%f\n", i+1, (server_des[i].total_tiempo_ocioso * 100)/tiempo);
 	}
 	for(i=0; i<size_s; i++){
 		printf("Server de soporte %d	-	%f\n", i+1, (server_sop[i].total_tiempo_ocioso * 100)/tiempo);
@@ -232,12 +232,13 @@ int main(int argc, char** argv){
 				numero_tickets_des ++;
 				printf("Nuevo ticket de Desarrollo\n");
 				if(numero_tickets_des <= *cant_serv_des){
-					int server_mas_ocioso = server_des_mas_ocioso(*cant_serv_des, tiempo);
+					int server_mas_ocioso = server_des_mas_ocioso(*cant_serv_des);
 					float tiempo_atencion = generar_tiempo_atencion_d();
 
 					total_atencion_desarrollo += tiempo_atencion;
 					server_des[server_mas_ocioso].tiempo_salida = tiempo + tiempo_atencion;
-					server_des[server_mas_ocioso].total_tiempo_ocioso = tiempo - server_des[server_mas_ocioso].inicio_tiempo_ocioso;
+					server_des[server_mas_ocioso].total_tiempo_ocioso += tiempo - server_des[server_mas_ocioso].inicio_tiempo_ocioso;
+					server_des[server_mas_ocioso].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
 
 					printf("Habra nueva salida de desarrollo en %f\n", tiempo + tiempo_atencion);
 				}
@@ -250,12 +251,13 @@ int main(int argc, char** argv){
 				printf("Nuevo ticket de Soporte\n");
 				if(numero_tickets_sop <= *cant_serv_sop)
 				{
-					int server_mas_ocioso = server_sop_mas_ocioso(*cant_serv_sop, tiempo);
+					int server_mas_ocioso = server_sop_mas_ocioso(*cant_serv_sop);
 					float tiempo_atencion = generar_tiempo_atencion_s();
 
 					total_atencion_soporte += tiempo_atencion;
 					server_sop[server_mas_ocioso].tiempo_salida = tiempo + tiempo_atencion;
-					server_sop[server_mas_ocioso].total_tiempo_ocioso = tiempo - server_sop[server_mas_ocioso].inicio_tiempo_ocioso;
+					server_sop[server_mas_ocioso].total_tiempo_ocioso += tiempo - server_sop[server_mas_ocioso].inicio_tiempo_ocioso;
+					server_sop[server_mas_ocioso].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
 
 					printf("Habra nueva salida de soporte en %f\n", tiempo + tiempo_atencion);
 				}
