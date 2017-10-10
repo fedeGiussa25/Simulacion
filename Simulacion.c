@@ -7,7 +7,7 @@
 #include <commons/collections/list.h>
 #include <commons/collections/queue.h>
 
-#define HV 9999
+#define HV 999999
 
 t_list* list_llegadas;
 
@@ -159,7 +159,7 @@ bool salidas_pendientes(int size_d, int size_s){
 void imprimir_PTOs(int size_d, int size_s){
 	int i;
 	for(i=0; i<size_d; i++){
-		printf("Server de desarrollo %d		-	%f\n", i+1, (server_des[i].total_tiempo_ocioso * 100)/tiempo);
+		printf("Server de desarrollo %d	-	%f\n", i+1, (server_des[i].total_tiempo_ocioso * 100)/tiempo);
 	}
 	for(i=0; i<size_s; i++){
 		printf("Server de soporte %d	-	%f\n", i+1, (server_sop[i].total_tiempo_ocioso * 100)/tiempo);
@@ -168,7 +168,7 @@ void imprimir_PTOs(int size_d, int size_s){
 
 int main(int argc, char** argv){
 	system("clear");
-	printf("SISTEMA DE SIMULACION DE COLAS DE TICKETS, by GIUSSAyCo. Ltd.\nAll rights reserved\n\nPulse cualquier tecla para continuar\n");
+	printf("SISTEMA DE SIMULACION DE COLAS DE TICKETS, by RECHANTAyCo. Ltd.\nAll rights reserved\n\nPulse cualquier tecla para continuar\n");
 	getchar();
 	system("clear");
 
@@ -205,7 +205,8 @@ int main(int argc, char** argv){
 
 	inicializar_servers(*cant_serv_des, *cant_serv_sop);
 
-	float tiempo_final = 5952;
+	//float tiempo_final = 5952;
+	float tiempo_final = 11904;
 	//bool running = 1;
 
 	evento *primera_llegada = malloc(sizeof(evento));
