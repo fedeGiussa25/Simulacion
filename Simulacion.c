@@ -205,9 +205,7 @@ int main(int argc, char** argv){
 
 	inicializar_servers(*cant_serv_des, *cant_serv_sop);
 
-	//float tiempo_final = 5952;
 	float tiempo_final = 11904;
-	//bool running = 1;
 
 	evento *primera_llegada = malloc(sizeof(evento));
 	primera_llegada->tiempo_evento = 0;
@@ -277,7 +275,6 @@ int main(int argc, char** argv){
 				float tiempo_atencion = generar_tiempo_atencion_d();
 				server_des[menor_d].tiempo_salida = tiempo + tiempo_atencion;
 
-				//todo
 				server_des[menor_d].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
 
 				total_atencion_desarrollo += tiempo_atencion;
@@ -298,7 +295,6 @@ int main(int argc, char** argv){
 				float tiempo_atencion = generar_tiempo_atencion_s();
 				server_sop[menor_s].tiempo_salida = tiempo + tiempo_atencion;
 
-				//todo
 				server_sop[menor_s].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
 
 				total_atencion_soporte += tiempo_atencion;
@@ -312,20 +308,7 @@ int main(int argc, char** argv){
 			total_salidas_s += tiempo;
 
 		}
-		//sleep(1);
-	/*	if(tiempo > tiempo_final)
-		{
-			printf("!");
-			if(numero_tickets_sop + numero_tickets_des > 0){
-				printf("!!");
-				evento *prox_llegada = list_get(list_llegadas, menor_ll);
-				prox_llegada->tiempo_evento = HV;
-			}
-			else{
-				printf("!!");
-				running = 0;
-			}
-		}*/
+
 	}
 	if(numero_tickets_des > 0 || numero_tickets_sop > 0){
 
@@ -343,7 +326,6 @@ int main(int argc, char** argv){
 							float tiempo_atencion = generar_tiempo_atencion_d();
 							server_des[menor_d].tiempo_salida = tiempo + tiempo_atencion;
 
-							//todo
 							server_des[menor_d].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
 
 							total_atencion_desarrollo += tiempo_atencion;
@@ -364,7 +346,6 @@ int main(int argc, char** argv){
 							float tiempo_atencion = generar_tiempo_atencion_s();
 							server_sop[menor_s].tiempo_salida = tiempo + tiempo_atencion;
 
-							//todo
 							server_sop[menor_s].inicio_tiempo_ocioso = tiempo + tiempo_atencion;
 
 							total_atencion_soporte += tiempo_atencion;
